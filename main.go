@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"shop/app"
 )
 
 func main() {
-	fmt.Println("hi world")
+	app.Run()
 }
