@@ -13,23 +13,27 @@ type ProductHandler struct {
 }
 
 func NewProductHandler(s *service.ProductService) *ProductHandler {
-	return &ProductHandler{service: s}
+	return &ProductHandler{
+		service: s,
+	}
 }
 
 func (h *ProductHandler) GetProducts(c *gin.Context) {
 	var filter models.ProductFilter
 
-	// Gin магически связывает query-параметры благодаря тегам form:"..."
+	// Связываем параметры из URL (query, category и т.д.)
 	if err := c.ShouldBindQuery(&filter); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid query parameters: " + err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	products, err := h.service.GetRecommendations(filter)
+	// Передаем контекст запроса и фильтр в сервис
+	products, err := h.service.GetRecommendations(c.Request.Context(), filter)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch recommendations"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch products"})
 		return
 	}
 
+	// Возвращаем успешный ответ со списком товаров
 	c.JSON(http.StatusOK, products)
-}
+} // <-- ПРОВЕРЬ НАЛИЧИЕ ЭТОЙ СКОБКИ!

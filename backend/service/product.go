@@ -4,6 +4,7 @@ import (
 	"backend/models"
 	"backend/repo"
 	"context"
+	"log"
 )
 
 type ProductService struct {
@@ -19,26 +20,22 @@ func NewProductService(r *repo.ProductRepo, s *repo.StorageService) *ProductServ
 	}
 }
 
-func (s *ProductService) GetRecommendations(filter models.ProductFilter) ([]models.Product, error) {
-	// 1. Получаем товары из БД через репозиторий
+func (s *ProductService) GetRecommendations(ctx context.Context, filter models.ProductFilter) ([]models.Product, error) {
 	products, err := s.repo.GetByFilters(filter)
 	if err != nil {
 		return nil, err
 	}
 
-	ctx := context.Background()
-
-	// 2. Генерируем безопасные URL для каждого товара из MinIO
 	for i := range products {
+		// Берем оригинальный ключ из БД (например, "massage.jpg")
 		if products[i].ImageKey != "" {
-			// Вызываем метод созданного вами блока
 			url, err := s.storageService.GetPresignedURL(ctx, products[i].ImageKey)
-			if err == nil {
-				products[i].ImageKey = url // Записываем ссылку в виртуальное поле
-			} else {
-				// Если ссылка не сгенерировалась, пишем ошибку в консоль, но не ломаем весь запрос
-				println("Ошибка генерации пресайнд ссылки для ключа:", products[i].ImageKey, err.Error())
+			if err != nil {
+				log.Printf("[MINIO ERROR] %v", err)
+				continue
 			}
+			// ПРАВИЛЬНО: Пишем ссылку в ImageURL, оставляя ImageKey нетронутым
+			products[i].ImageURL = url
 		}
 	}
 

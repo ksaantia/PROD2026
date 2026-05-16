@@ -18,6 +18,7 @@ type Product struct {
 	Price        float64      `json:"price" gorm:"type:decimal(10,2);index" binding:"required"`
 	PremiumLevel PremiumLevel `json:"premium_level" gorm:"type:varchar(50);index"`
 	ImageKey     string       `json:"image_key" gorm:"type:varchar(255)"`
+	ImageURL     string       `json:"image_url" gorm:"-"`
 	Rating       float32      `json:"rating" gorm:"type:numeric(3,1);default:0"`
 }
 
