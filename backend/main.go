@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -27,7 +26,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to connect database: %v", err)
 	}
-	db.AutoMigrate(&models.Product{}, &models.CartItem{}, &models.Order{})
+	db.AutoMigrate(&models.Product{}, &models.Order{}, &models.CartItem{})
 
 	// 2. Инициализация MinIO
 	minioClient, err := InitMinIO()
@@ -48,6 +47,8 @@ func main() {
 
 	productHandler := handlers.NewProductHandler(productService)
 	orderHandler := handlers.NewOrderHandler(orderService)
+
+	TestDB(db)
 
 	// 4. Настройка роутера
 	r := gin.Default()
@@ -73,12 +74,7 @@ func InitMinIO() (*minio.Client, error) {
 	accessKey := os.Getenv("MINIO_ACCESS_KEY")
 	secretKey := os.Getenv("MINIO_SECRET_KEY")
 	bucketName := os.Getenv("MINIO_BUCKET_NAME")
-	useSSLStr := os.Getenv("MINIO_USE_SSL")
-
-	useSSL, err := strconv.ParseBool(useSSLStr) // Передаем ВТОРОЙ аргумент (storageService) в конструктор сервиса
-	if err != nil {
-		useSSL = false
-	}
+	useSSL := os.Getenv("MINIO_USE_SSL") == "true"
 
 	minioClient, err := minio.New(endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(accessKey, secretKey, ""),
