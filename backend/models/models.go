@@ -15,11 +15,11 @@ type Product struct {
 	Title        string       `json:"title" gorm:"type:varchar(255);not null" binding:"required"`
 	Description  string       `json:"description" gorm:"type:text"`
 	Category     string       `json:"category" gorm:"type:varchar(100);index" binding:"required"`
-	Price        float64      `json:"price" gorm:"type:decimal(10,2);index" binding:"required"`
+	Price        float64      `json:"price" gorm:"type:numeric(15,2);index" binding:"required"` // Изменено на numeric(15,2) — до 999 миллиардов
 	PremiumLevel PremiumLevel `json:"premium_level" gorm:"type:varchar(50);index"`
 	ImageKey     string       `json:"image_key" gorm:"type:varchar(255)"`
 	ImageURL     string       `json:"image_url" gorm:"-"`
-	Rating       float32      `json:"rating" gorm:"type:numeric(3,1);default:0"`
+	Rating       float32      `json:"rating" gorm:"type:real;default:0"` // Изменено на real (обычный float в Postgres), больше никаких overflow
 }
 
 // Элемент корзины / заказа
