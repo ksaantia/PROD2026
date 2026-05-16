@@ -44,7 +44,7 @@ type Order struct {
 
 // Структура для фильтрации (используется в Query Params)
 type ProductFilter struct {
-	Query        string  `form:"q"`
+	Query        string  `form:"query"`
 	Category     string  `form:"category"`
 	MinPrice     float64 `form:"min_price"`
 	MaxPrice     float64 `form:"max_price"`
