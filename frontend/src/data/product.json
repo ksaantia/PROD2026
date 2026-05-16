@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "title": "Королевский Хаммам",
+    "description": "Очищение и расслабление в традиционном хаммаме. Настоящий ритуал красоты.",
+    "category": "spa",
+    "price": 15000,
+    "premiumLevel": "Premium",
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800"
+  },
+  {
+    "id": 2,
+    "title": "SPA-день для двоих",
+    "description": "Идеальный отдых с массажем, бассейном и ароматерапией для вас и вашего партнера.",
+    "category": "spa",
+    "price": 25000,
+    "premiumLevel": "VIP",
+    "rating": 5.0,
+    "image": "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?q=80&w=800"
+  },
+  {
+    "id": 3,
+    "title": "Детокс программа",
+    "description": "Полное очищение организма: обертывания, массаж и специальный чайный ритуал.",
+    "category": "spa",
+    "price": 9000,
+    "premiumLevel": "Basic",
+    "rating": 4.6,
+    "image": "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=800"
+  },
+  {
+    "id": 4,
+    "title": "Ретрит: Тишина",
+    "description": "Два дня медитаций в сосновом лесу. Практика випассаны и полное отключение от суеты.",
+    "category": "ретриты",
+    "price": 55000,
+    "premiumLevel": "VIP",
+    "rating": 4.9,
+    "image": "https://images.unsplash.com/photo-1508672019048-805c876b67e2?q=80&w=800"
+  },
+  {
+    "id": 5,
+    "title": "Йога-выходные",
+    "description": "Восстановление баланса тела и духа под руководством мастеров с Бали.",
+    "category": "ретриты",
+    "price": 30000,
+    "premiumLevel": "Premium",
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=800"
+  },
+  {
+    "id": 6,
+    "title": "Цифровой детокс",
+    "description": "Отдых от гаджетов на берегу горного озера. Трекинг, баня и здоровое питание.",
+    "category": "ретриты",
+    "price": 35000,
+    "premiumLevel": "Premium",
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1447452001602-7090c7ab2db3?q=80&w=800"
+  },
+  {
+    "id": 7,
+    "title": "Балийский массаж",
+    "description": "Глубокая проработка мышц и релаксация с использованием натуральных масел.",
+    "category": "массажи",
+    "price": 8000,
+    "premiumLevel": "Basic",
+    "rating": 4.5,
+    "image": "https://images.unsplash.com/photo-1604601815764-6d01d5b1c4e1?q=80&w=800"
+  },
+  {
+    "id": 8,
+    "title": "Стоун-терапия",
+    "description": "Массаж горячими вулканическими камнями. Снимает стресс и улучшает кровообращение.",
+    "category": "массажи",
+    "price": 11000,
+    "premiumLevel": "Premium",
+    "rating": 4.7,
+    "image": "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=800"
+  },
+  {
+    "id": 9,
+    "title": "Комплекс 'Антистресс'",
+    "description": "Авторская методика снятия напряжения с шейно-воротниковой зоны и головы.",
+    "category": "массажи",
+    "price": 14000,
+    "premiumLevel": "VIP",
+    "rating": 4.9,
+    "image": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=800"
+  },
+  {
+    "id": 10,
+    "title": "Индивидуальная медитация",
+    "description": "Сессия с проводником для глубокого погружения в подсознание и поиска ответов.",
+    "category": "медитации",
+    "price": 9500,
+    "premiumLevel": "Basic",
+    "rating": 4.6,
+    "image": "https://images.unsplash.com/photo-1528315651484-4d20ebde4d6d?q=80&w=800"
+  },
+  {
+    "id": 11,
+    "title": "Звуковая терапия (Гонг)",
+    "description": "Глубокое расслабление под вибрации гонга и поющих чаш.",
+    "category": "медитации",
+    "price": 12000,
+    "premiumLevel": "Premium",
+    "rating": 4.8,
+    "image": "https://images.unsplash.com/photo-1512438248247-f0f2a5a8b7f0?q=80&w=800"
+  },
+  {
+    "id": 12,
+    "title": "Закрытый клуб осознанности",
+    "description": "Доступ на месяц к еженедельным практикам медитации в премиальном пространстве.",
+    "category": "медитации",
+    "price": 60000,
+    "premiumLevel": "VIP",
+    "rating": 5.0,
+    "image": "https://images.unsplash.com/photo-1602192509154-0b900ee1f851?q=80&w=800"
+  }
+]
