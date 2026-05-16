@@ -38,13 +38,16 @@ func main() {
 
 	// 3. Инициализация слоев (Dependency Injection)
 	productRepo := repo.NewProductRepo(db)
+	orderRepo := repo.NewOrderRepo(db)
 
 	// Инициализируем наш StorageService, который лежит в пакете repo
 	storageService := repo.NewStorageService(minioClient, bucketName)
 
 	productService := service.NewProductService(productRepo, storageService)
+	orderService := service.NewOrderService(orderRepo, productRepo)
 
 	productHandler := handlers.NewProductHandler(productService)
+	orderHandler := handlers.NewOrderHandler(orderService)
 
 	// 4. Настройка роутера
 	r := gin.Default()
