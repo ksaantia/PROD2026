@@ -31,6 +31,8 @@ func (h *OrderHandler) CreateOrder(c *gin.Context) {
 		return
 	}
 
+	go service.SendOrderConfirmation(req.Email, req.Name, orderID, totalSum)
+
 	c.JSON(http.StatusOK, models.CreateOrderResponse{
 		TotalSum: totalSum,
 		OrderID:  orderID,
