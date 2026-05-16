@@ -40,7 +40,7 @@ func main() {
 
 	productHandler := handlers.NewProductHandler(productService)
 	orderHandler := handlers.NewOrderHandler(orderService) // Новый хэндлер
-
+	//TestDB(db)
 	r := gin.Default()
 
 	r.GET("/api/products", productHandler.GetProducts)
@@ -99,4 +99,31 @@ func InitMinIO() (*minio.Client, error) {
 	}
 
 	return minioClient, nil
+}
+
+func TestDB(db *gorm.DB) {
+	var count int64
+	db.Model(&models.Product{}).Count(&count)
+
+	// Если в базе уже есть продукты, ничего не делаем
+	if count > 0 {
+		return
+	}
+
+	log.Println("База данных пуста. Начинаем заполнение тестовыми wellness-продуктами...")
+
+	products := []models.Product{
+		{Title: "Массаж горячими камнями", Description: "Расслабляющий стоун-терапия для снятия стресса", Category: "SPA", Price: 120.00, PremiumLevel: models.LevelBasic, Rating: 4.8},
+		{Title: "Комплексный Чекап Организма", Description: "Полное медицинское обследование премиум-класса", Category: "Health", Price: 450.00, PremiumLevel: models.LevelPremium, Rating: 4.9},
+		{Title: "Абонемент на Медитации", Description: "10 занятий по глубокой осознанности и дыханию", Category: "Mindfulness", Price: 80.00, PremiumLevel: models.LevelBasic, Rating: 4.5},
+		{Title: "Индивидуальный Йога-Ретрит", Description: "Выходные наедине с природой и тренером", Category: "Retreat", Price: 600.00, PremiumLevel: models.LevelVIP, Rating: 5.0},
+		{Title: "Спа-день для двоих", Description: "Роскошная программа восстановления в гидромассажной зоне", Category: "SPA", Price: 250.00, PremiumLevel: models.LevelPremium, Rating: 4.7},
+		{Title: "Консультация нутрициолога", Description: "Разбор рациона и составление персональной карты здоровья", Category: "Health", Price: 150.00, PremiumLevel: models.LevelBasic, Rating: 4.6},
+	}
+
+	if err := db.Create(&products).Error; err != nil {
+		log.Printf("Ошибка при заполнении базы данных: %v\n", err)
+	} else {
+		log.Println("База данных успешно наполнена тестовыми продуктами!")
+	}
 }
