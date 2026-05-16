@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import products from '../data/product.json';
+import productsData from '../data/product.json';
+import ProductCard from './ProductCard'; // <-- Импортируем нашу общую карточку!
 
-// Анимация для контейнера (задает задержку между элементами)
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -10,37 +10,6 @@ const containerVariants = {
     transition: { staggerChildren: 0.2 }
   }
 };
-
-// Анимация для каждой карточки
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
-};
-
-const ProductCard = ({ product }) => (
-  <motion.div 
-    variants={itemVariants}
-    className="group flex flex-col bg-transparent border border-white/5 hover:border-[#d4af37]/40 transition-colors duration-700 cursor-pointer"
-  >
-    <div className="relative h-96 overflow-hidden">
-      <img 
-        src={product.image} 
-        alt={product.title} 
-        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000 ease-out opacity-70 group-hover:opacity-100" 
-      />
-      <div className="absolute top-6 left-6 z-20">
-        <span className="text-[9px] uppercase tracking-[0.2em] text-black bg-white/90 backdrop-blur-sm px-4 py-1.5 font-bold">
-          {product.premiumLevel}
-        </span>
-      </div>
-    </div>
-    <div className="p-8 flex flex-col flex-grow">
-      <h3 className="font-serif text-2xl text-white mb-3 group-hover:text-[#d4af37] transition-colors duration-500">{product.title}</h3>
-      <p className="text-gray-500 font-light text-sm mb-8 leading-relaxed flex-grow italic">{product.description}</p>
-      <p className="font-serif text-xl text-[#d4af37] tracking-wider">{product.price.toLocaleString('ru-RU')} ₽</p>
-    </div>
-  </motion.div>
-);
 
 export default function Catalog() {
   const categories = [
@@ -72,7 +41,7 @@ export default function Catalog() {
               viewport={{ once: true, margin: "-100px" }}
               className="grid grid-cols-1 md:grid-cols-3 gap-12"
             >
-              {products.filter(p => p.category === cat.slug).slice(0, 3).map(p => (
+              {productsData.filter(p => p.category === cat.slug).slice(0, 3).map(p => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </motion.div>

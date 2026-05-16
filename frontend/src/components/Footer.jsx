@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -6,22 +7,25 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
         
         <div>
-          <h3 className="font-serif text-2xl tracking-[0.1em] mb-6">WELLNESS<span className="text-[#d4af37]">.</span></h3>
+          <Link to="/" className="font-serif text-2xl tracking-[0.1em] mb-6 block hover:text-[#d4af37] transition">
+            WELLNESS<span className="text-[#d4af37]">.</span>
+          </Link>
           <p className="text-gray-500 text-xs leading-relaxed max-w-xs mx-auto md:mx-0">
             Эксклюзивная коллекция премиальных подарков для восстановления и осознанности.
           </p>
         </div>
 
         <div className="flex flex-col gap-4 text-xs uppercase tracking-widest text-gray-400">
-          <a href="#" className="hover:text-white transition">Каталог</a>
-          <a href="#" className="hover:text-white transition">О сервисе</a>
-          <a href="#" className="hover:text-white transition">Контакты</a>
+          <Link to="/catalog" className="hover:text-white transition cursor-pointer">Каталог</Link>
+          {/* Ссылка на главную страницу с якорем на блок 'О сервисе' (нужно чтобы в About.jsx был id="about") */}
+          <Link to="/" className="hover:text-white transition cursor-pointer">О сервисе</Link>
+          <a href="mailto:info@wellness-shop.com" className="hover:text-white transition cursor-pointer">Контакты</a>
         </div>
 
         <div className="flex flex-col gap-4 text-xs uppercase tracking-widest text-gray-400 md:items-end">
-          <a href="#" className="hover:text-white transition">Instagram</a>
-          <a href="#" className="hover:text-white transition">Telegram</a>
-          <a href="#" className="hover:text-white transition">Client Service</a>
+          <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-white transition cursor-pointer">Instagram</a>
+          <a href="https://telegram.org" target="_blank" rel="noreferrer" className="hover:text-white transition cursor-pointer">Telegram</a>
+          <a href="tel:+74950000000" className="hover:text-white transition cursor-pointer">Client Service</a>
         </div>
 
       </div>

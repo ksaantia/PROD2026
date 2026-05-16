@@ -10,7 +10,6 @@ export default function Home() {
       <Hero />
       <Catalog />
       <About />
-      <Footer />
     </div>
   );
 }
