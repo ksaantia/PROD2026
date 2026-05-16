@@ -22,11 +22,11 @@ func SendOrderConfirmation(toEmail, userName string, orderID uint, totalSum floa
 
 	body := fmt.Sprintf(`
 		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px;">
-			<h2 style="color: #2e7d32;">Привет, %s! 🌿</h2>
-			<p>Спасибо за твой заказ <b>№%d</b> на сумму <b>%.2f руб.</b></p>
-			<p>Твои Wellness-подарки уже оформлены. Если ты указывал комментарий к заказу, мы его обязательно учтем.</p>
+			<h2 style="color: #2e7d32;">Здравствуйте, %s! 🌿</h2>
+			<p>Спасибо за ваш заказ <b>№%d</b> на сумму <b>%.2f руб.</b></p>
+			<p>Ваши Wellness-подарки уже оформлены. Если Вы указывали комментарий к заказу, мы его обязательно учтем.</p>
 			<hr style="border: none; border-top: 1px solid #eaeaea; margin: 20px 0;">
-			<p style="font-size: 12px; color: #888;">С заботой о тебе,<br>Команда Wellness</p>
+			<p style="font-size: 12px; color: #888;">С заботой о вас,<br>Команда Wellness</p>
 		</div>
 	`, userName, orderID, totalSum)
 
