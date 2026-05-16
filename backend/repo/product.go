@@ -24,7 +24,6 @@ func (r *ProductRepo) GetByFilters(filter models.ProductFilter) ([]models.Produc
 		query = query.Where("title ILIKE ? OR description ILIKE ?", percentQuery, percentQuery)
 	}
 
-	// Фильтр по категории
 	if filter.Category != "" {
 		query = query.Where("category = ?", filter.Category)
 	}

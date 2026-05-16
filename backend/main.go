@@ -5,21 +5,29 @@ import (
 	"backend/models"
 	"backend/repo"
 	"backend/service"
+	"fmt"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/postgres" // или sqlite / mysql в зависимости от вашего стека
+	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func main() {
-	// Настройка подключения к БД (замените dsn на свой)
-	dsn := "host=localhost user=postgres password=secret dbname=wellness_shop port=5432 sslmode=disable"
+
+	if err := godotenv.Load(); err != nil {
+		log.Println("Предупреждение: .env файл не найден, используются системные переменные")
+	}
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+		os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"), os.Getenv("DB_PORT"), os.Getenv("DB_SSLMODE"))
+
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect database: %v", err)
 	}
-
 	// Автомиграция, чтобы таблицы создались сами
 	db.AutoMigrate(&models.Product{}, &models.CartItem{}, &models.Order{})
 
@@ -30,7 +38,6 @@ func main() {
 
 	r := gin.Default()
 
-	// Наш эндпоинт для фильтрации и рекомендаций
 	r.GET("/api/products", productHandler.GetProducts)
 
 	// Запуск на порту 8080
