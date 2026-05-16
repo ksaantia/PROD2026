@@ -115,12 +115,12 @@ func TestDB(db *gorm.DB) {
 	log.Println("База данных пуста. Начинаем заполнение тестовыми wellness-продуктами...")
 
 	products := []models.Product{
-		{Title: "Массаж горячими камнями", Description: "Расслабляющий стоун-терапия для снятия стресса", Category: "SPA", Price: 120.00, PremiumLevel: models.LevelBasic, Rating: 4.8},
-		{Title: "Комплексный Чекап Организма", Description: "Полное медицинское обследование премиум-класса", Category: "Health", Price: 450.00, PremiumLevel: models.LevelPremium, Rating: 4.9},
-		{Title: "Абонемент на Медитации", Description: "10 занятий по глубокой осознанности и дыханию", Category: "Mindfulness", Price: 80.00, PremiumLevel: models.LevelBasic, Rating: 4.5},
-		{Title: "Индивидуальный Йога-Ретрит", Description: "Выходные наедине с природой и тренером", Category: "Retreat", Price: 600.00, PremiumLevel: models.LevelVIP, Rating: 5.0},
-		{Title: "Спа-день для двоих", Description: "Роскошная программа восстановления в гидромассажной зоне", Category: "SPA", Price: 250.00, PremiumLevel: models.LevelPremium, Rating: 4.7},
-		{Title: "Консультация нутрициолога", Description: "Разбор рациона и составление персональной карты здоровья", Category: "Health", Price: 150.00, PremiumLevel: models.LevelBasic, Rating: 4.6},
+		{Title: "Массаж горячими камнями", Description: "Расслабляющий стоун-терапия для снятия стресса", Category: "SPA", Price: 120.00, PremiumLevel: models.LevelBasic, Rating: 4.8, ImageKey: "rabbid.jpg"},
+		{Title: "Комплексный Чекап Организма", Description: "Полное медицинское обследование премиум-класса", Category: "Health", Price: 450.00, PremiumLevel: models.LevelPremium, Rating: 4.9, ImageKey: "rabbid.jpg"},
+		{Title: "Абонемент на Медитации", Description: "10 занятий по глубокой осознанности и дыханию", Category: "Mindfulness", Price: 80.00, PremiumLevel: models.LevelBasic, Rating: 4.5, ImageKey: "rabbid.jpg"},
+		{Title: "Индивидуальный Йога-Ретрит", Description: "Выходные наедине с природой и тренером", Category: "Retreat", Price: 600.00, PremiumLevel: models.LevelVIP, Rating: 5.0, ImageKey: "rabbid.jpg"},
+		{Title: "Спа-день для двоих", Description: "Роскошная программа восстановления в гидромассажной зоне", Category: "SPA", Price: 250.00, PremiumLevel: models.LevelPremium, Rating: 4.7, ImageKey: "rabbid.jpg"},
+		{Title: "Консультация нутрициолога", Description: "Разбор рациона и составление персональной карты здоровья", Category: "Health", Price: 150.00, PremiumLevel: models.LevelBasic, Rating: 4.6, ImageKey: "rabbid.jpg"},
 	}
 
 	if err := db.Create(&products).Error; err != nil {
