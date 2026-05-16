@@ -50,3 +50,16 @@ type ProductFilter struct {
 	MaxPrice     float64 `form:"max_price"`
 	PremiumLevel string  `form:"premium_level"`
 }
+
+type CreateOrderRequest struct {
+	Name       string `json:"name" binding:"required"`
+	Email      string `json:"email" binding:"required,email"`
+	Recipient  string `json:"recipient"`
+	Comment    string `json:"comment"`
+	ProductIDs []uint `json:"product_ids" binding:"required,min=1"`
+}
+
+type CreateOrderResponse struct {
+	TotalSum float64 `json:"total_sum"`
+	OrderID  uint    `json:"order_id"`
+}

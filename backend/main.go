@@ -31,13 +31,20 @@ func main() {
 	db.AutoMigrate(&models.Product{}, &models.CartItem{}, &models.Order{})
 
 	// Инициализация слоев (Dependency Injection на минималках)
+	// Инициализация слоев
 	productRepo := repo.NewProductRepo(db)
+	orderRepo := repo.NewOrderRepo(db) // Новый репо
+
 	productService := service.NewProductService(productRepo)
+	orderService := service.NewOrderService(orderRepo, productRepo) // Новый сервис
+
 	productHandler := handlers.NewProductHandler(productService)
+	orderHandler := handlers.NewOrderHandler(orderService) // Новый хэндлер
 
 	r := gin.Default()
 
 	r.GET("/api/products", productHandler.GetProducts)
+	r.POST("/api/orders", orderHandler.CreateOrder) // Новый эндпоинт для оформления заказа
 
 	r.Run(":8080")
 }
