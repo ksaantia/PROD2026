@@ -22,27 +22,32 @@ import (
 func main() {
 	dsn := LoadEnv()
 
+	// 1. Подключение к БД
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("failed to connect database: %v", err)
 	}
-
-	// Автомиграция, чтобы таблицы создались сами
 	db.AutoMigrate(&models.Product{}, &models.CartItem{}, &models.Order{})
 
-	// Инициализация слоев (Dependency Injection на минималках)
-	// Инициализация слоев
-	productRepo := repo.NewProductRepo(db)
-	orderRepo := repo.NewOrderRepo(db) // Новый репо
+	// 2. Инициализация MinIO
+	minioClient, err := InitMinIO()
+	if err != nil {
+		log.Fatalf("failed to initialize MinIO: %v", err)
+	}
+	bucketName := os.Getenv("MINIO_BUCKET_NAME")
 
-	productService := service.NewProductService(productRepo)
-	orderService := service.NewOrderService(orderRepo, productRepo) // Новый сервис
+	// 3. Инициализация слоев (Dependency Injection)
+	productRepo := repo.NewProductRepo(db)
+
+	// Инициализируем наш StorageService, который лежит в пакете repo
+	storageService := repo.NewStorageService(minioClient, bucketName)
+
+	productService := service.NewProductService(productRepo, storageService)
 
 	productHandler := handlers.NewProductHandler(productService)
-	orderHandler := handlers.NewOrderHandler(orderService) // Новый хэндлер
-	//TestDB(db)
-	r := gin.Default()
 
+	// 4. Настройка роутера
+	r := gin.Default()
 	r.GET("/api/products", productHandler.GetProducts)
 	r.POST("/api/orders", orderHandler.CreateOrder) // Новый эндпоинт для оформления заказа
 
@@ -61,15 +66,15 @@ func LoadEnv() string {
 }
 
 func InitMinIO() (*minio.Client, error) {
-	// Считываем конфигурацию из .env через os.Getenv
-	endpoint := os.Getenv("MINIO_ENDPOINT")      // например, "127.0.0.1:9000"
-	accessKey := os.Getenv("MINIO_ACCESS_KEY")   // например, "minioadmin"
-	secretKey := os.Getenv("MINIO_SECRET_KEY")   // например, "minioadmin"
-	bucketName := os.Getenv("MINIO_BUCKET_NAME") // например, "shop-images"
+	endpoint := os.Getenv("MINIO_ENDPOINT")
+	accessKey := os.Getenv("MINIO_ACCESS_KEY")
+	secretKey := os.Getenv("MINIO_SECRET_KEY")
+	bucketName := os.Getenv("MINIO_BUCKET_NAME")
 	useSSLStr := os.Getenv("MINIO_USE_SSL")
-	useSSL, err := strconv.ParseBool(useSSLStr)
+
+	useSSL, err := strconv.ParseBool(useSSLStr) // Передаем ВТОРОЙ аргумент (storageService) в конструктор сервиса
 	if err != nil {
-		useSSL = false // дефолтное значение, если в .env что-то пошло не так
+		useSSL = false
 	}
 
 	minioClient, err := minio.New(endpoint, &minio.Options{
@@ -80,7 +85,6 @@ func InitMinIO() (*minio.Client, error) {
 		return nil, fmt.Errorf("не удалось создать клиент MinIO: %w", err)
 	}
 
-	// 2. Проверяем бакет (для хакатона критично автоматизировать этот шаг)
 	ctx := context.Background()
 	exists, err := minioClient.BucketExists(ctx, bucketName)
 	if err != nil {
@@ -88,14 +92,13 @@ func InitMinIO() (*minio.Client, error) {
 	}
 
 	if !exists {
-		// Создаем бакет, если локальный запуск чистый
 		err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{})
 		if err != nil {
 			return nil, fmt.Errorf("не удалось автоматически создать бакет '%s': %w", bucketName, err)
 		}
 		log.Printf("[MinIO] Бакет '%s' успешно создан", bucketName)
 	} else {
-		log.Printf("[MinIO] Бакet '%s' уже существует, подключение успешно", bucketName)
+		log.Printf("[MinIO] Бакет '%s' уже существует, подключение успешно", bucketName)
 	}
 
 	return minioClient, nil
