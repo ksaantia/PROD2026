@@ -77,6 +77,8 @@ func main() {
 	r.GET("/api/products", productHandler.GetProducts)
 	r.POST("/api/orders", orderHandler.CreateOrder)
 
+	r.StaticFile("/favicon.ico", "./favicon.ico")
+
 	r.Run(":8080")
 }
 
