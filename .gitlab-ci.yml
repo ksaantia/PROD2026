@@ -17,9 +17,16 @@ deploy_to_server:
     - main
 
   before_script:
+    # Переключаем репозитории на http, чтобы обойти ошибку TLS в ранере
+    - sed -i 's/https/http/g' /etc/apk/repositories
     - apk update && apk add openssh-client
+    
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
-    - cp "$DEPLOY_KEY" ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
+    
+    # Очищаем приватный ключ от Windows-символов переноса строк
+    - cat "$DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - echo "" >> ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
 
     # Генерируем .env для бэкенда
     - echo "DB_HOST=${DB_HOST}" >> backend.env
@@ -38,13 +45,9 @@ deploy_to_server:
     - echo "VITE_API_URL=http://${DEPLOY_HOST}:8080/api" >> frontend.env
 
   script:
-    # 1. Заливаем контент backend.env прямо внутрь файла на удаленном сервере через SSH
+    # Перед каждой строкой ниже должно быть ровно 4 пробела!
     - cat backend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/backend/.env"
-    
-    # 2. Делаем то же самое для фронтенда
     - cat frontend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/frontend/.env"
-    
-    # 3. Обновляем гит и перезапускаем docker-compose
     - |
       ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "
         cd /home/ubuntu/app && \
