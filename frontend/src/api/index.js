@@ -1,12 +1,11 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://hack-umms-team-10-front-back-2e0e8a.vm.prodcontest.com:8080';
-
+const API_URL = 'http://hack-umms-team-10-front-back-2e0e8a.vm.prodcontest.com:8080';
 // Умный кэш: чтобы Шапка, Каталог и Главная не делали 3 одинаковых запроса одновременно
 let fetchPromise = null;
 
 export const getProducts = async () => {
   if (fetchPromise) return fetchPromise;
 
-  fetchPromise = fetch('http://hack-umms-team-10-front-back-2e0e8a.vm.prodcontest.com:8080/api/products')
+  fetchPromise = fetch(`${API_URL}/api/products`)
     .then((res) => {
       if (!res.ok) throw new Error('Ошибка при загрузке товаров');
       return res.json();
