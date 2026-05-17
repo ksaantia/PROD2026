@@ -36,7 +36,7 @@ deploy_to_server:
     - echo "MINIO_BUCKET_NAME=${MINIO_BUCKET_NAME}" >> backend.env
     - echo "MINIO_USE_SSL=${MINIO_USE_SSL}" >> backend.env
 
-    # Генерируем .env для фронтенда
+    # Генерируем .env для фронтенда 
     - echo "VITE_API_URL=http://${DEPLOY_HOST}:8080/api" >> frontend.env
 
   script:
@@ -45,6 +45,6 @@ deploy_to_server:
     - |
       ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "
         cd /home/ubuntu/app && \
-        git pull origin master || git pull origin main && \
-        docker-compose up --build -d
+        (git pull origin master || git pull origin main) && \
+        docker-compose up --build -d --force-recreate
       "
