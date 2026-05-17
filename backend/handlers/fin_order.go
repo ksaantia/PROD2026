@@ -19,7 +19,7 @@ func NewOrderHandler(s *service.OrderService) *OrderHandler {
 func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	var req models.CreateOrderRequest
 
-	// Валидация JSON. Если корзина пустая или нет email/имени — вернет ошибку.
+	// валидация жсон
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: " + err.Error()})
 		return

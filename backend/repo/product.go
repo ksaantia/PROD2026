@@ -18,7 +18,7 @@ func (r *ProductRepo) GetByFilters(filter models.ProductFilter) ([]models.Produc
 	var products []models.Product
 	query := r.db.Model(&models.Product{})
 
-	// Поиск по тексту (название или описание)
+	// поиск по тексту
 	if filter.Query != "" {
 		percentQuery := "%" + filter.Query + "%"
 		query = query.Where("title ILIKE ? OR description ILIKE ?", percentQuery, percentQuery)
@@ -28,7 +28,7 @@ func (r *ProductRepo) GetByFilters(filter models.ProductFilter) ([]models.Produc
 		query = query.Where("category = ?", filter.Category)
 	}
 
-	// Фильтры по цене
+	// фильтры по цене
 	if filter.MinPrice > 0 {
 		query = query.Where("price >= ?", filter.MinPrice)
 	}
@@ -36,12 +36,11 @@ func (r *ProductRepo) GetByFilters(filter models.ProductFilter) ([]models.Produc
 		query = query.Where("price <= ?", filter.MaxPrice)
 	}
 
-	// Фильтр по уровню премиальности
+	// фильтр по уровню премиальности
 	if filter.PremiumLevel != "" {
 		query = query.Where("premium_level = ?", filter.PremiumLevel)
 	}
 
-	// Выполняем запрос
 	if err := query.Find(&products).Error; err != nil {
 		return nil, err
 	}

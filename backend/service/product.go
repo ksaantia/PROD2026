@@ -9,10 +9,9 @@ import (
 
 type ProductService struct {
 	repo           *repo.ProductRepo
-	storageService *repo.StorageService // Добавляем поле для работы с S3
+	storageService *repo.StorageService
 }
 
-// Обновленный конструктор: принимает и repo, и storage
 func NewProductService(r *repo.ProductRepo, s *repo.StorageService) *ProductService {
 	return &ProductService{
 		repo:           r,
@@ -27,14 +26,14 @@ func (s *ProductService) GetRecommendations(ctx context.Context, filter models.P
 	}
 
 	for i := range products {
-		// Берем оригинальный ключ из БД (например, "massage.jpg")
+
 		if products[i].ImageKey != "" {
 			url, err := s.storageService.GetPresignedURL(ctx, products[i].ImageKey)
 			if err != nil {
 				log.Printf("[MINIO ERROR] %v", err)
 				continue
 			}
-			// ПРАВИЛЬНО: Пишем ссылку в ImageURL, оставляя ImageKey нетронутым
+
 			products[i].ImageURL = url
 		}
 	}

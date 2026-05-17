@@ -7,16 +7,13 @@ import (
 	"os"
 )
 
-// SendOrderConfirmation отправляет красивое HTML-письмо с благодарностью
 func SendOrderConfirmation(toEmail, userName string, orderID uint, totalSum float64) {
-	// 1. Настройки SMTP (в идеале хранить в .env, но для тестов пишем тут)
-	from := os.Getenv("EMAIL_FROM")         // Твоя реальная почта
-	password := os.Getenv("EMAIL_PASSWORD") // Без пробелов!
+
+	from := os.Getenv("EMAIL_FROM")
+	password := os.Getenv("EMAIL_PASSWORD")
 	smtpHost := "smtp.gmail.com"
 	smtpPort := "587"
 
-	// 2. Формируем заголовки и тело письма (HTML)
-	// Обязательно оставляем пустую строку (\r\n\r\n) перед телом body
 	subject := "Subject: Спасибо за заказ в Wellness!\r\n"
 	mime := "MIME-version: 1.0;\r\nContent-Type: text/html; charset=\"UTF-8\";\r\n\r\n"
 
@@ -32,10 +29,8 @@ func SendOrderConfirmation(toEmail, userName string, orderID uint, totalSum floa
 
 	msg := []byte(subject + mime + body)
 
-	// 3. Авторизация на сервере Google
 	auth := smtp.PlainAuth("", from, password, smtpHost)
 
-	// 4. Отправка
 	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, []string{toEmail}, msg)
 	if err != nil {
 		log.Printf("[EMAIL ERROR] Не удалось отправить письмо на %s: %v", toEmail, err)

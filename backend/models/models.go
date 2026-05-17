@@ -1,6 +1,5 @@
 package models
 
-// Уровни премиальности
 type PremiumLevel string
 
 const (
@@ -9,20 +8,18 @@ const (
 	LevelVIP     PremiumLevel = "VIP"
 )
 
-// Подарок (Wellness Gift)
 type Product struct {
 	ID           uint         `json:"id" gorm:"primaryKey"`
 	Title        string       `json:"title" gorm:"type:varchar(255);not null" binding:"required"`
 	Description  string       `json:"description" gorm:"type:text"`
 	Category     string       `json:"category" gorm:"type:varchar(100);index" binding:"required"`
-	Price        float64      `json:"price" gorm:"type:numeric(15,2);index" binding:"required"` // Изменено на numeric(15,2) — до 999 миллиардов
+	Price        float64      `json:"price" gorm:"type:numeric(15,2);index" binding:"required"`
 	PremiumLevel PremiumLevel `json:"premium_level" gorm:"type:varchar(50);index"`
 	ImageKey     string       `json:"image_key" gorm:"type:varchar(255)"`
 	ImageURL     string       `json:"image_url" gorm:"-"`
-	Rating       float32      `json:"rating" gorm:"type:real;default:0"` // Изменено на real (обычный float в Postgres), больше никаких overflow
+	Rating       float32      `json:"rating" gorm:"type:real;default:0"`
 }
 
-// Элемент корзины / заказа
 type CartItem struct {
 	ID        uint    `json:"id" gorm:"primaryKey"`
 	OrderID   uint    `json:"-" gorm:"index"`
@@ -32,7 +29,6 @@ type CartItem struct {
 	Quantity  int     `json:"quantity" gorm:"default:1"`
 }
 
-// Заказ
 type Order struct {
 	ID        uint       `json:"id" gorm:"primaryKey"`
 	Customer  string     `json:"customer_name" gorm:"type:varchar(255);not null" binding:"required"`
@@ -43,7 +39,6 @@ type Order struct {
 	TotalSum  float64    `json:"total_sum" gorm:"type:decimal(10,2)"`
 }
 
-// Структура для фильтрации (используется в Query Params)
 type ProductFilter struct {
 	Query        string  `form:"query"`
 	Category     string  `form:"category"`

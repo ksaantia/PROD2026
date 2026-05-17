@@ -16,7 +16,7 @@ func NewOrderService(o *repo.OrderRepo, p *repo.ProductRepo) *OrderService {
 }
 
 func (s *OrderService) ProcessOrder(req models.CreateOrderRequest) (float64, uint, error) {
-	// 1. Считаем количество каждого товара (группируем дубликаты ID)
+	// счетчик товаров
 	quantityMap := make(map[uint]int)
 	var uniqueIDs []uint
 	for _, id := range req.ProductIDs {
@@ -26,7 +26,6 @@ func (s *OrderService) ProcessOrder(req models.CreateOrderRequest) (float64, uin
 		quantityMap[id]++
 	}
 
-	// 2. Получаем продукты из БД для расчета честной цены
 	products, err := s.productRepo.GetByIDs(uniqueIDs)
 	if err != nil {
 		return 0, 0, err
@@ -35,7 +34,6 @@ func (s *OrderService) ProcessOrder(req models.CreateOrderRequest) (float64, uin
 		return 0, 0, errors.New("no valid products found")
 	}
 
-	// 3. Формируем элементы корзины и считаем сумму
 	var items []models.CartItem
 	var totalSum float64
 
@@ -51,7 +49,6 @@ func (s *OrderService) ProcessOrder(req models.CreateOrderRequest) (float64, uin
 		})
 	}
 
-	// 4. Создаем заказ
 	order := models.Order{
 		Customer:  req.Name,
 		Email:     req.Email,
@@ -61,7 +58,6 @@ func (s *OrderService) ProcessOrder(req models.CreateOrderRequest) (float64, uin
 		Items:     items,
 	}
 
-	// 5. Сохраняем в базу (GORM подставит ID после успешного INSERT)
 	if err := s.orderRepo.Create(&order); err != nil {
 		return 0, 0, err
 	}

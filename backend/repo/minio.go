@@ -20,13 +20,12 @@ func NewStorageService(client *minio.Client, bucketName string) *StorageService 
 	}
 }
 
-// GetPresignedURL принимает путь к файлу в бакете и возвращает безопасную ссылку
+// безопасная ссылкат на изображение
 func (s *StorageService) GetPresignedURL(ctx context.Context, pathToFile string) (string, error) {
 	if pathToFile == "" {
 		return "", nil
 	}
 
-	// Время жизни ссылки (15 минут)
 	expires := time.Minute * 15
 	reqParams := make(url.Values)
 
