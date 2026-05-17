@@ -36,15 +36,20 @@ deploy_to_server:
     - echo "MINIO_BUCKET_NAME=${MINIO_BUCKET_NAME}" >> backend.env
     - echo "MINIO_USE_SSL=${MINIO_USE_SSL}" >> backend.env
 
-    # Генерируем .env для фронтенда 
+    # Генерируем .env для фронтенда  
     - echo "VITE_API_URL=http://${DEPLOY_HOST}:8080/api" >> frontend.env
 
   script:
+    # 1. Отправляем env-файлы
     - cat backend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/backend/.env"
     - cat frontend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/frontend/.env"
+    
+    # 2. Жестко чистим старых призраков и поднимаем проект с нуля
     - |
       ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "
         cd /home/ubuntu/app && \
         (git pull origin master || git pull origin main) && \
+        (docker rm -f app_backend_1 app_frontend_1 || true) && \
+        docker-compose down && \
         docker-compose up --build -d --force-recreate
       "
