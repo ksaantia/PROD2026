@@ -40,11 +40,18 @@ deploy_to_server:
     - echo "VITE_API_URL=http://${DEPLOY_HOST}:8080/api" >> frontend.env
 
   script:
+    # 1. Принудительно создаем папки на сервере (на случай, если их нет)
+    - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "mkdir -p /home/ubuntu/app/backend /home/ubuntu/app/frontend"
+    
+    # 2. Передаем env-файлы
     - cat backend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/backend/.env"
     - cat frontend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/frontend/.env"
+    
+    # 3. Обновляем код (игнорируя проверку хоста гитлаба) и перезапускаем Docker
     - |
       ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "
         cd /home/ubuntu/app && \
-        git pull origin master || git pull origin main && \
+        export GIT_SSH_COMMAND='ssh -o StrictHostKeyChecking=no' && \
+        (git pull origin master || git pull origin main) && \
         docker-compose up --build -d
       "
