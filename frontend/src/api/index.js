@@ -1,5 +1,5 @@
 // src/api/index.js
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+const API_URL = import.meta.env.VITE_API_URL || 'http://hack-umms-team-10-front-back-2e0e8a.vm.prodcontest.com:8080';
 
 // Получение всех продуктов
 export const getProducts = async () => {
