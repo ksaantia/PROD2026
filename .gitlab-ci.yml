@@ -17,7 +17,7 @@ deploy_to_server:
     - main
 
   before_script:
-    # Дефис на месте, теперь всё сматчится идеально 
+    # Дефис на месте, теперь всё сматчится идеально  
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     - cat "$DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - echo "" >> ~/.ssh/id_rsa
