@@ -12,6 +12,7 @@ import (
 
 	_ "backend/docs"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/minio/minio-go/v7"
@@ -62,6 +63,15 @@ func main() {
 
 	// 4. Настройка роутера
 	r := gin.Default()
+
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true, // Для хакатона проще разрешить всё. На проде укажите конкретные домены.
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
+
 	// Вместо версии с ginSwagger.URL(...) пишем чистый обработчик:
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/api/products", productHandler.GetProducts)
