@@ -11,19 +11,14 @@ test:
 
 deploy_to_server:
   stage: deploy
-  image: alpine:latest
+  image: instrumentisto/rsync-ssh:latest
   only:
     - master
     - main
 
   before_script:
-    # Переключаем репозитории на http, чтобы обойти ошибку TLS в ранере
-    - sed -i 's/https/http/g' /etc/apk/repositories
-    - apk update && apk add openssh-client
-    
+    # Дефис на месте, теперь всё сматчится идеально
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
-    
-    # Очищаем приватный ключ от Windows-символов переноса строк
     - cat "$DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - echo "" >> ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
@@ -45,7 +40,6 @@ deploy_to_server:
     - echo "VITE_API_URL=http://${DEPLOY_HOST}:8080/api" >> frontend.env
 
   script:
-    # Перед каждой строкой ниже должно быть ровно 4 пробела!
     - cat backend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/backend/.env"
     - cat frontend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/frontend/.env"
     - |
