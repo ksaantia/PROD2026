@@ -72,7 +72,9 @@ definitions:
     - price
     - title
     type: object
-host: http://hack-umms-team-10-front-back-2e0e8a.vm.prodcontest.com:8080
+host: hack-umms-team-10-front-back-2e0e8a.vm.prodcontest.com:8080
+schemes:
+  - http
 info:
   contact: {}
   description: Бэкенд-платформа для хакатона (Team 10).
