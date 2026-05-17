@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import productsData from '../data/product.json';
+import { getProducts } from '../api';
 
 const highlightText = (text, highlight) => {
   if (!highlight.trim()) return text;
@@ -14,6 +14,7 @@ const highlightText = (text, highlight) => {
 };
 
 export default function Header() {
+  const [productsData, setProductsData] = useState([]);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -25,17 +26,24 @@ export default function Header() {
   const menuRef = useRef(null);
   const searchRef = useRef(null);
 
+  // Запрашиваем товары для работы живого поиска
+  useEffect(() => {
+    getProducts().then(data => setProductsData(data));
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Блокируем скролл страницы только для окна поиска
   useEffect(() => {
-    if (isMenuOpen) document.body.style.overflow = 'hidden';
+    if (isSearchOpen) document.body.style.overflow = 'hidden';
     else document.body.style.overflow = 'auto';
-  }, [isMenuOpen]);
+  }, [isSearchOpen]);
 
+  // Закрытие при клике вне панелей
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) setIsMenuOpen(false);
@@ -69,7 +77,7 @@ export default function Header() {
       p.title.toLowerCase().includes(query) || 
       p.description.toLowerCase().includes(query)
     ).slice(0, 5);
-  }, [searchQuery]);
+  }, [searchQuery, productsData]);
 
   return (
     <>
@@ -91,7 +99,7 @@ export default function Header() {
                   <span className="hidden md:block text-xs uppercase tracking-widest font-medium">Menu</span>
                 </button>
 
-                {/* Адаптивное меню: на мобилке растягивается, на ПК имеет фиксированную ширину */}
+                {/* Выпадающее меню */}
                 <AnimatePresence>
                   {isMenuOpen && (
                     <motion.div 
@@ -150,7 +158,7 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Адаптивный Поиск: панель с отступами от краев экрана */}
+          {/* Адаптивный Поиск */}
           <AnimatePresence>
             {isSearchOpen && (
               <motion.div 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { createOrder } from '../api'; // Импорт нашей функции для работы с Go
+import { createOrder } from '../api';
 
 export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
@@ -38,27 +38,21 @@ export default function CheckoutPage() {
     if (validate()) {
       setIsSubmitting(true);
       
-      // Формируем payload для Go-бэкенда
+      // Разворачиваем количество в массив ID (если товара 2 штуки, будет [id, id]) 
+      // Это именно то, что ждет структура CreateOrderRequest в Go
+      const productIds = cartItems.flatMap(item => Array(item.quantity).fill(item.id));
+
       const orderPayload = {
-        customer: {
-          name: formData.name,
-          email: formData.email,
-          for_whom: formData.forWhom,
-          comment: formData.comment
-        },
-        items: cartItems.map(item => ({
-          product_id: item.id,
-          quantity: item.quantity,
-          price: item.price
-        })),
-        total_amount: cartTotal
+        name: formData.name,
+        email: formData.email,
+        recipient: formData.forWhom,
+        comment: formData.comment,
+        product_ids: productIds 
       };
 
       try {
-        // Отправляем POST запрос на бэкенд
         await createOrder(orderPayload);
 
-        // Передаем данные на страницу "Спасибо", чтобы вывести резюме
         navigate('/success', { 
           state: { 
             name: formData.name, 
@@ -66,10 +60,9 @@ export default function CheckoutPage() {
             cartTotal: cartTotal 
           } 
         });
-        
-        clearCart(); // Очищаем корзину (из контекста и localStorage)
+        clearCart(); 
       } catch (error) {
-        alert("Произошла ошибка при оформлении заказа. Пожалуйста, проверьте соединение с сервером.");
+        alert("Произошла ошибка при оформлении заказа. Проверьте соединение с сервером.");
       } finally {
         setIsSubmitting(false);
       }
@@ -80,7 +73,7 @@ export default function CheckoutPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0a] text-white">
         <h2 className="text-3xl font-serif mb-4">Ваша корзина пуста</h2>
-        <Link to="/catalog" className="text-[#d4af37] border-b border-[#d4af37] pb-1 uppercase text-xs tracking-widest">
+        <Link to="/catalog" className="text-[#d4af37] border-b border-[#d4af37] pb-1 uppercase text-xs tracking-widest cursor-pointer">
           Вернуться к покупкам
         </Link>
       </div>
@@ -93,18 +86,15 @@ export default function CheckoutPage() {
         <h1 className="font-serif text-4xl md:text-5xl text-white mb-12">Оформление заказа</h1>
 
         <div className="flex flex-col lg:flex-row gap-16">
-          
           <div className="flex-grow">
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              
               <div>
                 <label className="block text-gray-400 text-xs uppercase tracking-widest mb-2">Ваше имя *</label>
                 <input 
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                  className={`w-full bg-transparent border ${errors.name ? 'border-red-500' : 'border-white/20'} text-white px-4 py-3 focus:outline-none focus:border-[#d4af37] transition`}
-                  placeholder="Например, Александр"
+                  type="text" 
+                  value={formData.name} 
+                  onChange={(e) => setFormData({...formData, name: e.target.value})} 
+                  className={`w-full bg-transparent border ${errors.name ? 'border-red-500' : 'border-white/20'} text-white px-4 py-3 focus:outline-none focus:border-[#d4af37] transition`} 
                 />
                 {errors.name && <p className="text-red-500 text-xs mt-2">{errors.name}</p>}
               </div>
@@ -112,11 +102,10 @@ export default function CheckoutPage() {
               <div>
                 <label className="block text-gray-400 text-xs uppercase tracking-widest mb-2">Email *</label>
                 <input 
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  className={`w-full bg-transparent border ${errors.email ? 'border-red-500' : 'border-white/20'} text-white px-4 py-3 focus:outline-none focus:border-[#d4af37] transition`}
-                  placeholder="your@email.com"
+                  type="email" 
+                  value={formData.email} 
+                  onChange={(e) => setFormData({...formData, email: e.target.value})} 
+                  className={`w-full bg-transparent border ${errors.email ? 'border-red-500' : 'border-white/20'} text-white px-4 py-3 focus:outline-none focus:border-[#d4af37] transition`} 
                 />
                 {errors.email && <p className="text-red-500 text-xs mt-2">{errors.email}</p>}
               </div>
@@ -124,29 +113,27 @@ export default function CheckoutPage() {
               <div>
                 <label className="block text-gray-400 text-xs uppercase tracking-widest mb-2">Для кого подарок?</label>
                 <input 
-                  type="text"
-                  value={formData.forWhom}
-                  onChange={(e) => setFormData({...formData, forWhom: e.target.value})}
-                  className="w-full bg-transparent border border-white/20 text-white px-4 py-3 focus:outline-none focus:border-[#d4af37] transition"
-                  placeholder="Себе, маме, коллеге..."
+                  type="text" 
+                  value={formData.forWhom} 
+                  onChange={(e) => setFormData({...formData, forWhom: e.target.value})} 
+                  className="w-full bg-transparent border border-white/20 text-white px-4 py-3 focus:outline-none focus:border-[#d4af37] transition" 
                 />
               </div>
 
               <div>
                 <label className="block text-gray-400 text-xs uppercase tracking-widest mb-2">Комментарий к заказу</label>
                 <textarea 
-                  rows="4"
-                  value={formData.comment}
-                  onChange={(e) => setFormData({...formData, comment: e.target.value})}
+                  rows="4" 
+                  value={formData.comment} 
+                  onChange={(e) => setFormData({...formData, comment: e.target.value})} 
                   className="w-full bg-transparent border border-white/20 text-white px-4 py-3 focus:outline-none focus:border-[#d4af37] transition resize-none"
-                  placeholder="Особые пожелания..."
                 ></textarea>
               </div>
 
               <button 
-                type="submit"
-                disabled={isSubmitting}
-                className="mt-6 bg-[#d4af37] text-black font-bold uppercase tracking-widest text-sm py-5 hover:bg-white transition-colors duration-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                type="submit" 
+                disabled={isSubmitting} 
+                className="mt-6 bg-[#d4af37] text-black font-bold uppercase tracking-widest text-sm py-5 hover:bg-white transition-colors duration-500 disabled:opacity-50 cursor-pointer"
               >
                 {isSubmitting ? 'Обработка...' : 'Подтвердить заказ'}
               </button>
@@ -156,7 +143,6 @@ export default function CheckoutPage() {
           <div className="w-full lg:w-1/3">
             <div className="border border-white/10 p-8 sticky top-32">
               <h3 className="font-serif text-2xl text-white mb-6 border-b border-white/10 pb-4">Ваш заказ</h3>
-              
               <div className="flex flex-col gap-4 mb-8">
                 {cartItems.map(item => (
                   <div key={item.id} className="flex justify-between items-center text-sm">
@@ -165,14 +151,12 @@ export default function CheckoutPage() {
                   </div>
                 ))}
               </div>
-              
               <div className="flex justify-between items-center text-white font-serif text-2xl pt-4 border-t border-white/10">
                 <span>Итого</span>
                 <span className="text-[#d4af37]">{cartTotal.toLocaleString('ru-RU')} ₽</span>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
