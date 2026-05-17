@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0"
     },
-    "host": "localhost:8080",
+    "host": "http://hack-umms-team-10-front-back-2e0e8a.vm.prodcontest.com:8080",
     "basePath": "/api",
     "paths": {
         "/orders": {
