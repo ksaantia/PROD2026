@@ -17,13 +17,13 @@ deploy_to_server:
     - main
 
   before_script:
-    # ЖЕСТКИЙ ФИКС TLS: переключаем репозитории Alpine с https на http, чтобы обойти ошибку сети
+    # Переключаем репозитории на http, чтобы обойти ошибку TLS в ранере
     - sed -i 's/https/http/g' /etc/apk/repositories
     - apk update && apk add openssh-client
     
     - mkdir -p ~/.ssh && chmod 700 ~/.ssh
     
-    # ФИКС КЛЮЧА: убираем Windows-переносы строк (\r) и принудительно добавляем пустую строку в конец
+    # Очищаем приватный ключ от Windows-символов переноса строк
     - cat "$DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - echo "" >> ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
@@ -45,58 +45,9 @@ deploy_to_server:
     - echo "VITE_API_URL=http://${DEPLOY_HOST}:8080/api" >> frontend.env
 
   script:
-    # 1. Надежно передаем env-файлы чер
-Running with gitlab-runner 18.8.0 (9ffb4aa0)
-  on glr-gitlab-runner-7fd6b45976-f9qsv WmL4OUyt9, system ID: r_DonH39EX8oQG
-Preparing the "kubernetes" executor 00:00
-Using Kubernetes namespace: gitlab-runners
-Using Kubernetes executor with image alpine:latest ...
-Using attach strategy to execute scripts...
-Using effective pull policy of [] for container build
-Using effective pull policy of [] for container helper
-Using effective pull policy of [] for container init-permissions
-Preparing environment 00:07
-Using FF_USE_POD_ACTIVE_DEADLINE_SECONDS, the Pod activeDeadlineSeconds will be set to the job timeout: 1h0m0s...
-Waiting for pod gitlab-runners/runner-wml4ouyt9-project-1692-concurrent-0-udqccwwn to be running, status is Pending
-Waiting for pod gitlab-runners/runner-wml4ouyt9-project-1692-concurrent-0-udqccwwn to be running, status is Pending
-	ContainersNotReady: "containers with unready status: [build helper]"
-	ContainersNotReady: "containers with unready status: [build helper]"
-Running on runner-wml4ouyt9-project-1692-concurrent-0-udqccwwn via glr-gitlab-runner-7fd6b45976-f9qsv...
-Getting source from Git repository 00:03
-Gitaly correlation ID: 01KRSR9ZH3YPKHRW3ZBN9TDRD4
-Fetching changes with git depth set to 20...
-Initialized empty Git repository in /builds/hack-umms-team-10/shop/.git/
-Created fresh repository.
-Checking out c98b7354 as detached HEAD (ref is master)...
-Skipping Git submodules setup
-Executing "step_script" stage of the job script 02:00
-$ apk update && apk add openssh-client
-WARNING: updating and opening https://dl-cdn.alpinelinux.org/alpine/v3.23/main/x86_64/APKINDEX.tar.gz: TLS: unspecified error
-WARNING: updating and opening https://dl-cdn.alpinelinux.org/alpine/v3.23/community/x86_64/APKINDEX.tar.gz: TLS: unspecified error
-2 unavailable, 0 stale; 16 distinct packages available
-$ mkdir -p ~/.ssh && chmod 700 ~/.ssh
-$ cp "$DEPLOY_KEY" ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-$ echo "DB_HOST=${DB_HOST}" >> backend.env
-$ echo "DB_PORT=${DB_PORT}" >> backend.env
-$ echo "DB_USER=${DB_USER}" >> backend.env
-$ echo "DB_PASSWORD=${DB_PASSWORD}" >> backend.env
-$ echo "DB_NAME=${DB_NAME}" >> backend.env
-$ echo "DB_SSLMODE=${DB_SSLMODE}" >> backend.env
-$ echo "MINIO_ENDPOINT=${MINIO_ENDPOINT}" >> backend.env
-$ echo "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}" >> backend.env
-$ echo "MINIO_SECRET_KEY=${MINIO_SECRET_KEY}" >> backend.env
-$ echo "MINIO_BUCKET_NAME=${MINIO_BUCKET_NAME}" >> backend.env
-$ echo "MINIO_USE_SSL=${MINIO_USE_SSL}" >> backend.env
-$ echo "VITE_API_URL=http://${DEPLOY_HOST}:8080/api" >> frontend.env
-$ cat backend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/backend/.env"
-/scripts-1692-120331/step_script: eval: line 223: ssh: not found
-Cleaning up project directory and file based variables 00:01
-ERROR: Job failed: command terminated with exit code 127
-ез SSH-поток (работает без scp)
+    # Перед каждой строкой ниже должно быть ровно 4 пробела!
     - cat backend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/backend/.env"
     - cat frontend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/frontend/.env"
-    
-    # 2. Обновляем репозиторий на сервере и перезапускаем контейнеры
     - |
       ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "
         cd /home/ubuntu/app && \
