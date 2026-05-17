@@ -5,5 +5,3 @@ dist-ssr
 .vscode
 .idea
 *.log
-.env
-.env.*
