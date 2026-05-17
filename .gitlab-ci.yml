@@ -11,19 +11,17 @@ test:
 
 deploy_to_server:
   stage: deploy
-  image: alpine:latest
+  # Используем готовый образ, где SSH и SCP вшиты изначально. Никакого интернета для сборки!
+  image: instrumentisto/rsync-ssh:latest
   only:
     - master
     - main
 
   before_script:
-    # Переключаем репозитории на http, чтобы обойти ошибку TLS в ранере
-    - sed -i 's/https/http/g' /etc/apk/repositories
-    - apk update && apk add openssh-client
+    # Создаем папку для ключа (команды apk add здесь больше НЕТ)
+    mkdir -p ~/.ssh && chmod 700 ~/.ssh
     
-    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
-    
-    # Очищаем приватный ключ от Windows-символов переноса строк
+    # ФИКС КЛЮЧА: убираем Windows-переносы строк (\r) и принудительно добавляем пустую строку в конец
     - cat "$DEPLOY_KEY" | tr -d '\r' > ~/.ssh/id_rsa
     - echo "" >> ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
@@ -45,9 +43,11 @@ deploy_to_server:
     - echo "VITE_API_URL=http://${DEPLOY_HOST}:8080/api" >> frontend.env
 
   script:
-    # Перед каждой строкой ниже должно быть ровно 4 пробела!
+    # 1. Надежно передаем env-файлы через SSH-поток
     - cat backend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/backend/.env"
     - cat frontend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/frontend/.env"
+    
+    # 2. Обновляем репозиторий на сервере и перезапускаем контейнеры
     - |
       ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "
         cd /home/ubuntu/app && \
