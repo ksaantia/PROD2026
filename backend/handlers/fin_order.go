@@ -16,6 +16,15 @@ func NewOrderHandler(s *service.OrderService) *OrderHandler {
 	return &OrderHandler{service: s}
 }
 
+// CreateOrder godoc
+// @Summary      Create a new order
+// @Description  Takes order details and saves it to the database.
+// @Tags         orders
+// @Accept       json
+// @Produce      json
+// @Param        order  body      models.Order  true  "Order JSON"
+// @Success      201    {object}  models.Order
+// @Router       /orders [post]
 func (h *OrderHandler) CreateOrder(c *gin.Context) {
 	var req models.CreateOrderRequest
 

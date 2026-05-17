@@ -10,13 +10,23 @@ import (
 	"log"
 	"os"
 
+	_ "backend/docs"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+// @title           Wellness Shop API
+// @version         1.0
+// @description     Бэкенд-платформа для хакатона (Team 10).
+// @host            localhost:8080
+// @BasePath        /api
 
 func main() {
 	dsn := LoadEnv()
@@ -52,8 +62,10 @@ func main() {
 
 	// 4. Настройка роутера
 	r := gin.Default()
+	// Вместо версии с ginSwagger.URL(...) пишем чистый обработчик:
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.GET("/api/products", productHandler.GetProducts)
-	r.POST("/api/orders", orderHandler.CreateOrder) // Новый эндпоинт для оформления заказа
+	r.POST("/api/orders", orderHandler.CreateOrder)
 
 	r.Run(":8080")
 }

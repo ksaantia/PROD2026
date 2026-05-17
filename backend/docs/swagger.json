@@ -1,0 +1,178 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Бэкенд-платформа для хакатона (Team 10).",
+        "title": "Wellness Shop API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/orders": {
+            "post": {
+                "description": "Takes order details and saves it to the database.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "orders"
+                ],
+                "summary": "Create a new order",
+                "parameters": [
+                    {
+                        "description": "Order JSON",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Order"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Order"
+                        }
+                    }
+                }
+            }
+        },
+        "/products": {
+            "get": {
+                "description": "Responds with the list of all available products as JSON.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "Get list of products",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Product"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.CartItem": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "product_id": {
+                    "type": "integer"
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Order": {
+            "type": "object",
+            "required": [
+                "customer_name",
+                "email"
+            ],
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "customer_name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.CartItem"
+                    }
+                },
+                "recipient": {
+                    "type": "string"
+                },
+                "total_sum": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.PremiumLevel": {
+            "type": "string",
+            "enum": [
+                "Basic",
+                "Premium",
+                "VIP"
+            ],
+            "x-enum-varnames": [
+                "LevelBasic",
+                "LevelPremium",
+                "LevelVIP"
+            ]
+        },
+        "models.Product": {
+            "type": "object",
+            "required": [
+                "category",
+                "price",
+                "title"
+            ],
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "expanded_description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "image_key": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "premium_level": {
+                    "$ref": "#/definitions/models.PremiumLevel"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "rating": {
+                    "type": "number"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

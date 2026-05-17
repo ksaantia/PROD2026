@@ -18,6 +18,13 @@ func NewProductHandler(s *service.ProductService) *ProductHandler {
 	}
 }
 
+// GetProducts godoc
+// @Summary      Get list of products
+// @Description  Responds with the list of all available products as JSON.
+// @Tags         products
+// @Produce      json
+// @Success      200  {array}   models.Product
+// @Router       /products [get]
 func (h *ProductHandler) GetProducts(c *gin.Context) {
 	var filter models.ProductFilter
 

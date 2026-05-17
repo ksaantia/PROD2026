@@ -1,0 +1,119 @@
+basePath: /api
+definitions:
+  models.CartItem:
+    properties:
+      id:
+        type: integer
+      price:
+        type: number
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+      title:
+        type: string
+    type: object
+  models.Order:
+    properties:
+      comment:
+        type: string
+      customer_name:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      items:
+        items:
+          $ref: '#/definitions/models.CartItem'
+        type: array
+      recipient:
+        type: string
+      total_sum:
+        type: number
+    required:
+    - customer_name
+    - email
+    type: object
+  models.PremiumLevel:
+    enum:
+    - Basic
+    - Premium
+    - VIP
+    type: string
+    x-enum-varnames:
+    - LevelBasic
+    - LevelPremium
+    - LevelVIP
+  models.Product:
+    properties:
+      category:
+        type: string
+      description:
+        type: string
+      expanded_description:
+        type: string
+      id:
+        type: integer
+      image_key:
+        type: string
+      image_url:
+        type: string
+      premium_level:
+        $ref: '#/definitions/models.PremiumLevel'
+      price:
+        type: number
+      rating:
+        type: number
+      title:
+        type: string
+    required:
+    - category
+    - price
+    - title
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Бэкенд-платформа для хакатона (Team 10).
+  title: Wellness Shop API
+  version: "1.0"
+paths:
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: Takes order details and saves it to the database.
+      parameters:
+      - description: Order JSON
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/models.Order'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Order'
+      summary: Create a new order
+      tags:
+      - orders
+  /products:
+    get:
+      description: Responds with the list of all available products as JSON.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Product'
+            type: array
+      summary: Get list of products
+      tags:
+      - products
+swagger: "2.0"
