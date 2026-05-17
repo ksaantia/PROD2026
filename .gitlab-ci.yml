@@ -38,11 +38,13 @@ deploy_to_server:
     - echo "VITE_API_URL=http://${DEPLOY_HOST}:8080/api" >> frontend.env
 
   script:
-    # 1. Закидываем сгенерированные файлы на сервер в папку /home/ubuntu/app
-    - scp -o StrictHostKeyChecking=no backend.env $DEPLOY_USER@$DEPLOY_HOST:/home/ubuntu/app/backend/.env
-    - scp -o StrictHostKeyChecking=no frontend.env $DEPLOY_USER@$DEPLOY_HOST:/home/ubuntu/app/frontend/.env
+    # 1. Заливаем контент backend.env прямо внутрь файла на удаленном сервере через SSH
+    - cat backend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/backend/.env"
     
-    # 2. Обновляем код и поднимаем контейнеры
+    # 2. Делаем то же самое для фронтенда
+    - cat frontend.env | ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "cat > /home/ubuntu/app/frontend/.env"
+    
+    # 3. Обновляем гит и перезапускаем docker-compose
     - |
       ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "
         cd /home/ubuntu/app && \
