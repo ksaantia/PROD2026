@@ -6,7 +6,7 @@ let fetchPromise = null;
 export const getProducts = async () => {
   if (fetchPromise) return fetchPromise;
 
-  fetchPromise = fetch(`${API_URL}/api/products`)
+  fetchPromise = fetch('http://hack-umms-team-10-front-back-2e0e8a.vm.prodcontest.com:8080/api/products')
     .then((res) => {
       if (!res.ok) throw new Error('Ошибка при загрузке товаров');
       return res.json();
