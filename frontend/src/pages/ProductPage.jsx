@@ -23,9 +23,6 @@ export default function ProductPage() {
     });
   }, [id]);
 
-  // Формируем ссылку назад: если есть сохраненные параметры фильтра, подставляем их
-  const backLink = location.state?.from ? `/catalog${location.state.from}` : '/catalog';
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
