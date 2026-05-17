@@ -35,6 +35,8 @@ deploy_to_server:
     - echo "MINIO_SECRET_KEY=${MINIO_SECRET_KEY}" >> backend.env
     - echo "MINIO_BUCKET_NAME=${MINIO_BUCKET_NAME}" >> backend.env
     - echo "MINIO_USE_SSL=${MINIO_USE_SSL}" >> backend.env
+    - echo "EMAIL_FROM=${EMAIL_FROM}" >> backend.env
+    - echo "EMAIL_PASSWORD=${EMAIL_PASSWORD}" >> backend.env
 
     # Генерируем .env для фронтенда  
     - echo "VITE_API_URL=http://${DEPLOY_HOST}:8080/api" >> frontend.env
