@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { createOrder } from '../api'; // Импорт нашей функции для работы с Go
 
 export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
@@ -16,7 +17,6 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Валидация по ТЗ
   const validate = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = 'Пожалуйста, укажите ваше имя';
@@ -32,14 +32,32 @@ export default function CheckoutPage() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validate()) {
       setIsSubmitting(true);
       
-      // Имитация отправки и оплаты заказа
-      setTimeout(() => {
+      // Формируем payload для Go-бэкенда
+      const orderPayload = {
+        customer: {
+          name: formData.name,
+          email: formData.email,
+          for_whom: formData.forWhom,
+          comment: formData.comment
+        },
+        items: cartItems.map(item => ({
+          product_id: item.id,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        total_amount: cartTotal
+      };
+
+      try {
+        // Отправляем POST запрос на бэкенд
+        await createOrder(orderPayload);
+
         // Передаем данные на страницу "Спасибо", чтобы вывести резюме
         navigate('/success', { 
           state: { 
@@ -48,8 +66,13 @@ export default function CheckoutPage() {
             cartTotal: cartTotal 
           } 
         });
-        clearCart(); // Очищаем корзину после оформления
-      }, 1500);
+        
+        clearCart(); // Очищаем корзину (из контекста и localStorage)
+      } catch (error) {
+        alert("Произошла ошибка при оформлении заказа. Пожалуйста, проверьте соединение с сервером.");
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -71,7 +94,6 @@ export default function CheckoutPage() {
 
         <div className="flex flex-col lg:flex-row gap-16">
           
-          {/* Форма */}
           <div className="flex-grow">
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               
@@ -131,7 +153,6 @@ export default function CheckoutPage() {
             </form>
           </div>
 
-          {/* Итог заказа сбоку */}
           <div className="w-full lg:w-1/3">
             <div className="border border-white/10 p-8 sticky top-32">
               <h3 className="font-serif text-2xl text-white mb-6 border-b border-white/10 pb-4">Ваш заказ</h3>

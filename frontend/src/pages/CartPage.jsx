@@ -21,7 +21,7 @@ export default function CartPage() {
             <p className="text-gray-400 text-sm mb-8">Вы еще не выбрали ни одного подарка.</p>
             <Link 
               to="/catalog"
-              className="border border-[#d4af37] text-[#d4af37] px-8 py-3 text-xs uppercase tracking-widest hover:bg-[#d4af37] hover:text-black transition duration-300"
+              className="border border-[#d4af37] text-[#d4af37] px-8 py-3 text-xs uppercase tracking-widest hover:bg-[#d4af37] hover:text-black transition duration-300 inline-block"
             >
               Перейти в каталог
             </Link>
@@ -37,40 +37,39 @@ export default function CartPage() {
                     layout 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, x: -50, scale: 0.95 }} 
+                    exit={{ opacity: 0, scale: 0.9 }} // Убрали выезд влево, теперь просто плавно затухает и сжимается
                     transition={{ duration: 0.4, ease: "easeOut" }}
-                    className="flex gap-6 border border-white/10 p-4 bg-white/[0.01]"
+                    className="flex gap-4 md:gap-6 border border-white/10 p-4 bg-white/[0.01]"
                   >
-                    <img src={item.image} alt={item.title} className="w-24 h-32 md:w-32 md:h-40 object-cover opacity-80" />
+                    {/* Адаптивный размер изображения */}
+                    <img src={item.image} alt={item.title} className="w-20 h-28 md:w-32 md:h-40 object-cover opacity-80 flex-shrink-0" />
                     
                     <div className="flex flex-col justify-between flex-grow">
                       <div>
-                        <div className="flex justify-between items-start">
-                          <p className="text-[#d4af37] text-[10px] uppercase tracking-widest mb-1">{item.category}</p>
-                          {/* Кнопка полного удаления позиции */}
+                        <div className="flex justify-between items-start gap-2">
+                          <p className="text-[#d4af37] text-[9px] md:text-[10px] uppercase tracking-widest mb-1">{item.category}</p>
                           <button 
                             onClick={() => removeFromCart(item.id)}
-                            className="text-gray-600 hover:text-red-500 text-[10px] uppercase tracking-widest transition"
+                            className="text-gray-600 hover:text-red-500 text-[10px] uppercase tracking-widest transition whitespace-nowrap cursor-pointer"
                           >
-                            ✕ Удалить
+                            ✕ <span className="hidden sm:inline">Удалить</span>
                           </button>
                         </div>
-                        <h3 className="font-serif text-xl md:text-2xl text-white mb-4">{item.title}</h3>
+                        <h3 className="font-serif text-lg md:text-2xl text-white mb-3 md:mb-4 leading-tight">{item.title}</h3>
                         
-                        {/* Регулятор количества */}
-                        <div className="flex items-center gap-3">
-                          <p className="text-gray-500 text-xs">Количество:</p>
-                          <div className="flex items-center border border-white/20">
-                            <button onClick={() => decreaseQuantity(item.id)} className="px-3 py-1 text-white hover:text-[#d4af37] transition">-</button>
+                        {/* Адаптивный блок количества */}
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                          <p className="text-gray-500 text-[10px] md:text-xs">Количество:</p>
+                          <div className="flex items-center border border-white/20 w-max">
+                            <button onClick={() => decreaseQuantity(item.id)} className="px-3 py-1 text-white hover:text-[#d4af37] transition cursor-pointer">-</button>
                             <span className="text-xs text-white min-w-[24px] text-center font-bold">{item.quantity}</span>
-                            <button onClick={() => addToCart(item)} className="px-3 py-1 text-white hover:text-[#d4af37] transition">+</button>
+                            <button onClick={() => addToCart(item)} className="px-3 py-1 text-white hover:text-[#d4af37] transition cursor-pointer">+</button>
                           </div>
                         </div>
                       </div>
                       
                       <div className="flex items-center justify-between mt-4">
-                        {/* Цена за все единицы этого товара */}
-                        <p className="font-serif text-xl text-white">{(item.price * item.quantity).toLocaleString('ru-RU')} ₽</p>
+                        <p className="font-serif text-lg md:text-xl text-white">{(item.price * item.quantity).toLocaleString('ru-RU')} ₽</p>
                       </div>
                     </div>
                   </motion.div>
@@ -94,7 +93,7 @@ export default function CartPage() {
 
                 <Link 
                   to="/checkout"
-                  className="w-full block text-center bg-[#d4af37] text-black font-bold uppercase tracking-widest text-xs py-4 hover:bg-white transition-colors duration-500"
+                  className="w-full block text-center bg-[#d4af37] text-black font-bold uppercase tracking-widest text-xs py-4 hover:bg-white transition-colors duration-500 cursor-pointer"
                 >
                   Оформить заказ
                 </Link>

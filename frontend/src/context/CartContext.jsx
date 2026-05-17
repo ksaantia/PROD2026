@@ -1,11 +1,29 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
+  // Инициализируем корзину из localStorage, если там что-то есть
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const savedCart = localStorage.getItem('wellness_cart');
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error("Ошибка при чтении корзины из localStorage:", error);
+      return [];
+    }
+  });
+
+  // Сохраняем корзину в localStorage при каждом ее изменении
+  useEffect(() => {
+    try {
+      localStorage.setItem('wellness_cart', JSON.stringify(cartItems));
+    } catch (error) {
+      console.error("Ошибка при сохранении корзины в localStorage:", error);
+    }
+  }, [cartItems]);
 
   const addToCart = (product) => {
     setCartItems((prev) => {
@@ -35,7 +53,6 @@ export const CartProvider = ({ children }) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // Очистка корзины после успешного заказа
   const clearCart = () => {
     setCartItems([]);
   };
