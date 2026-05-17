@@ -46,6 +46,7 @@ type ProductFilter struct {
 	MinPrice     float64 `form:"min_price"`
 	MaxPrice     float64 `form:"max_price"`
 	PremiumLevel string  `form:"premium_level"`
+	Page         uint    `form:"page"`
 }
 
 type CreateOrderRequest struct {
